@@ -16,7 +16,7 @@
   To run the code, proceed with the following steps:
 </p>
 <ol>
-  <li>Open the link found <a href="https://codesandbox.io/p/github/C-Coding-Assignments/Agile-Data-Processor/main?file=%2Fmain.c%3A1%2C21&workspaceId=ws_MNuV7ubDLW8nxTDFu9Cvrh">here</a></li>
+  <li>Open the link found <a href="https://codesandbox.io/p/github/C-Coding-Assignments/Agile-Data-Processor/main?file=%2Fmain.c%3A1%2C21&workspaceId=ws_MNuV7ubDLW8nxTDFu9Cvrh" target="_blank">here</a></li>
   <li>When on codesandbox.io, navigate to the hamburger, the icon with three vertical lines</li>
   <li>Hover over the hamburger and hover over the terminal option that pops up, then click new terminal</li>
   <li>In the terminal that opens, type <code>make</code>. The program will then compile</li>
