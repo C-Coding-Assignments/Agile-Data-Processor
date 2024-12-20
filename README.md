@@ -11,18 +11,6 @@
   <p>
     The <strong>Agile Data Processor</strong> is an advanced C programming project that demonstrates the ability to handle and manipulate dynamic datasets efficiently. With a focus on real-time data processing, memory management, and algorithmic performance, this project showcases practical problem-solving and system design techniques.
   </p>
-<h2>Run Code Here!</h2>
-<p>
-  To run the code, proceed with the following steps:
-</p>
-<ol>
-  <li>Open the link found <a href="https://codesandbox.io/p/github/C-Coding-Assignments/Agile-Data-Processor/main?file=%2Fmain.c%3A1%2C21&workspaceId=ws_MNuV7ubDLW8nxTDFu9Cvrh" target="_blank">here</a></li>
-  <li>When on codesandbox.io, navigate to the hamburger, the icon with three vertical lines</li>
-  <li>Hover over the hamburger and hover over the terminal option that pops up, then click new terminal</li>
-  <li>In the terminal that opens, type <code>make</code>. The program will then compile</li>
-  <li>After the program compiles, run the executable file by typing <code>./main</code></li>
-  <li>Now you can interact with my program!</li>
-</ol>
 </header>
 
 <hr>
