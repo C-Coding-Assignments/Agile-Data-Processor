@@ -11,6 +11,20 @@
   <p>
     The <strong>Agile Data Processor</strong> is an advanced C programming project that demonstrates the ability to handle and manipulate dynamic datasets efficiently. With a focus on real-time data processing, memory management, and algorithmic performance, this project showcases practical problem-solving and system design techniques.
   </p>
+
+  <h2>How to Run the Code</h2>
+<p>I have created an account on Online GDB, which is an online compiler, to make it easy for you to run the code. Below are the login details:</p>
+<ul>
+  <li><strong>Email:</strong> egarrett055@gmail.com</li>
+  <li><strong>Password:</strong> tempUser</li>
+</ul>
+<p>To run the program, follow these steps:</p>
+<ol>
+  <li>Click <a href="https://www.onlinegdb.com/edit/RqjKUJv_d" target="_blank">here</a> to access the code.</li>
+  <li>Enter the login details provided above (email and password).</li>
+  <li>Click the "Run" button, and the program will execute at the bottom of the screen, allowing you to experience the work firsthand.</li>
+</ol>
+<p>Enjoy running the program, and feel free to explore the code!</p>
 </header>
 
 <hr>
