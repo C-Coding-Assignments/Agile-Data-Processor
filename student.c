@@ -921,3 +921,4 @@ void writeStudents(FILE *fptr, const struct Student *head)
         fprintf(fptr, "|  COP 2510 Attempts: %-26d |\n", ptr->attempts);
         fprintf(fptr, "--------------------------------------------------\n");
     }
+}
