@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Program in WebAssembly</title>
+</head>
+<body>
+    <h1>Run C Program with WebAssembly</h1>
+    <button onclick="runCProgram()">Run C Program</button>
+    <div id="output"></div>
+
+    <script>
+        var Module = {
+            onRuntimeInitialized: function() {
+                console.log("WebAssembly Loaded!");
+            },
+        };
+
+        function runCProgram() {
+            // Calls the C function from the WebAssembly module
+            Module._main();
+        }
+    </script>
+
+    <script src="hello.js"></script>
+</body>
+</html>
