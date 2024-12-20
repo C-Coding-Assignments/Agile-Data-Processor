@@ -21,12 +21,13 @@
 </p>
 <ol>
   <li>Open the link found <a href="https://legendary-space-guacamole-q77xggj96q5rf4v9p.github.dev/">here</a></li>
-  <li>When GitHub Codespaces opens up, navigate to the upper left-hand side of the screen and click on the hamburger, the symbol with the three vertical lines</li>
+  <li>When GitHub Codespaces opens, navigate to the upper-left-hand side of the screen and click on the hamburger icon, the symbol with three vertical lines</li>
   <li>Then hover over "Terminal" and click on "New Terminal"</li>
-  <li>When the terminal opens up, type make to compile the C files</li>
-  <li>Once the program files are compiled, the executable file needs to be run. To do this, type ./main</li>
-  <li>The program has now successfully ran and you can now enjoy my project!</li>
+  <li>When the terminal opens, type <code>make</code> to compile the C files</li>
+  <li>Once the program files are compiled, the executable file needs to be run. To do this, type <code>./main</code></li>
+  <li>The program has now successfully run, and you can enjoy my project!</li>
 </ol>
+
 
 <hr>
 
