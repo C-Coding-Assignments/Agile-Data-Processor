@@ -313,13 +313,11 @@
     <p><strong>Returns:</strong> The updated head pointer of the linked list after sorting or reversing the list. If no sorting is performed, the head pointer remains unchanged.</p>
 </div>
 <div class="function-explanation">
-    <h2><code>struct Student *sortLogic(struct Student *head, struct Student *ptr, struct Student *ptr2, const int *logic, const struct ListManager *manager)</code></h2>
+    <h2><code>struct Student *sortLogic(struct Student *head, const int *logic, const struct ListManager *manager)</code></h2>
     <p><strong>Description:</strong> This function provides the sorting functionality for the doubly linked list of students based on various criteria. It uses two nested loops to iterate over the list and compare each pair of students. The sorting logic is controlled by the value of <code>logic</code>, which determines whether nodes are swapped based on the comparison of student attributes such as their grade, GPA, or name. The function also makes use of a helper function <code>swapPtr</code> to swap nodes when necessary.</p>
     <p><strong>Parameters:</strong></p>
     <ul>
         <li><strong>head</strong>: A pointer to the head of the linked list of students.</li>
-        <li><strong>ptr</strong>: A pointer to the current student node being compared.</li>
-        <li><strong>ptr2</strong>: A pointer to the next student node to be compared with <code>ptr</code>.</li>
         <li><strong>logic</strong>: A pointer to an integer controlling the sorting behavior. If the value is positive, nodes are swapped based on a general sorting criterion. If the value is 0, sorting is based on a custom comparison of grade, GPA, and name.</li>
         <li><strong>manager</strong>: A pointer to the ListManager structure that contains helper functions for managing the linked list, including the <code>swapPtr</code> function.</li>
     </ul>
