@@ -208,13 +208,17 @@ void getGrade(char *letter)
 //function definition for getGpa which gets the new student's gpa from the user and removes the new-line characters within the input
 double getGpa(char *gpaStr)
 {
-    //variable declarations
+    //variable declarations and initialization
     bool flag;
     double gpa;
+    int dotCounter = 0;
 
     //do-while loop which iterates until the user enters a valid GPA (0-4.0) and removes the new-line characters within the input
     do
     {
+        flag = true;
+        dotCounter = 0;
+
         //do-while loop which iterates until the user enters a valid string input
         do
         {
@@ -228,14 +232,40 @@ double getGpa(char *gpaStr)
             if (!strlen(gpaStr))
                 printf("Student's GPA must be at least one character.\n");
         } while (strlen(gpaStr) < 1);
-        
-        //converting the string to a double value and checking if it is within the valid range (0-4.0)
-        gpa = atof(gpaStr);
-        flag = (gpa < 0 || gpa > 4.0) ? true : false;
 
-        //ternary expression which evaluates to true if flag is true; if so, an error message is printed to the user; otherwise, the control exits the loop
-        (flag) ? (printf("Invalid GPA. Please enter a valid GPA (0-4.0).\n")) : (1);;
-    } while (flag);
+        //for loop which checks if there are any non-double digits in the string
+        for (char *ptr = gpaStr; *ptr != '\0'; ptr++)
+        {
+            //selection statement which evaluates to true if a non-double digit is detected in the string; if so, set flag to false so the user can be prompted to enter in a new string
+            if (!(*ptr >= '0' && *ptr <= '9') && *ptr != '.')
+                flag = false;
+
+            //selection statement which evaluates to true if a dot is detected for the first time in the stirng; if so, increment the dot counter to count the number of dots the user has entered
+            else if (*ptr == '.' && dotCounter == 0)
+                dotCounter++;
+
+            //selection statement which evaluates to true if a second dat is detected in the user's input; if so, set flag to false so the user can be prompted to enter in a new string
+            else if (*ptr == '.' && dotCounter == 1)
+                flag = false;
+        }        
+
+        //selection statement which evaluates to true if flag is false; if so, print an error message and bring the control to the end of the loop so the loop can iterate again
+        if (!flag)
+        {
+            printf("Invalid GPA. Please enter a valid GPA (0-4.0).\n");
+            continue;
+        }        
+        
+        //converting the string to a double value
+        gpa = atof(gpaStr);
+
+        //ternary expression which evaluates to false if the GPA is outside the valid range (0-4.0); if so, set flag to false so the user can be prompted to enter in a new string; otherwise, set flag to true
+        flag = (gpa < 0 || gpa > 4.0) ? false : true;
+
+        //selection statement which evaluates to true if flag is true; if so, an error message is printed to the user; otherwise, the control exits the loop
+        if (!flag)
+            printf("Invalid GPA. Please enter a valid GPA (0-4.0).\n");
+    } while (!flag);
 
     return gpa;
 }
@@ -662,9 +692,14 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
     } while (selection > 7 || selection < 1);
 
     //selection statement which evaluates to true if selection does not equal 7; if so, sort the students according to the user's selection
-    if (selection != 7)
+    if (selection < 6)
         //calling the sortLogicPtr function to sort doubly linked list
         manager->sortLogicPtr(head, &selection, manager);
+
+    //selection statement which evaluates to true if selection equals 6; if so, reverse the doubly linked list
+    else if (selection == 6)
+        //calling the reversePtr function to reverse the doubly linked list
+        head = manager->reversePtr(head, manager);    
     
     //switch statement which determines the sorting criteria based on the user's menu selection
     switch (selection)
@@ -711,7 +746,7 @@ struct Student *sortLogic(struct Student *head, const int *logic, const struct L
 
                 //updating the head pointer if the swapped node is the head
                 ptr = head;
-                
+
                 break;
             }
         }
