@@ -27,7 +27,7 @@ struct ListManager
     void (*printListPtr)(const struct Student *, const struct MenuManager *);
     struct Student *(*deleteAllPtr)(struct Student *);
     struct Student *(*sortPtr)(struct Student *, const struct ListManager *);
-    struct Student *(*sortLogicPtr)(struct Student *, struct Student *, struct Student *, const int *, const struct ListManager *);
+    struct Student *(*sortLogicPtr)(struct Student *, const int *, const struct ListManager *);
     void (*swapPtr)(struct Student *, struct Student *, struct Student *);
     struct Student *(*reversePtr)(struct Student *, const struct ListManager *);
 };
@@ -105,7 +105,7 @@ void sortMenu();
 struct Student *sort(struct Student *, const struct ListManager *);
 
 //function prototype for sortLogic which sorts the linked list of students based on the user's selection and swaps the nodes if necessary
-struct Student *sortLogic(struct Student *, struct Student *, struct Student *, const int *, const struct ListManager *);
+struct Student *sortLogic(struct Student *, const int *, const struct ListManager *);
 
 //function prototype for swap which swaps two nodes within the linked list based on the user's selection of sorting criteria and order
 void swap(struct Student *, struct Student *, struct Student *);
