@@ -124,7 +124,7 @@
 
 <section id="function-explanations">
   <h2>Function Definitions 🧑‍💻</h2>
-  h2><code>void menu()</code></h2>
+  <h2><code>void menu()</code></h2>
     <p><strong>Description:</strong> This function displays the main menu to the user with various options for managing the student queue.</p>
     <p><strong>Parameters:</strong></p>
     <ul>
