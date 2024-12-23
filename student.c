@@ -641,8 +641,7 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
 {
     //variable declarations and initialization
     char temp[MAX_LENGTH + 1];
-    int selection, boolean;
-    struct Student *ptr = head, *ptr2;
+    int selection;
 
     //selection statement which evaluates to true if head is equal to NULL; if so, print an error message and exit the function
     if (head == NULL)
@@ -661,105 +660,60 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
         fgets(temp, MAX_LENGTH + 1, stdin);
         selection = atoi(temp);
     } while (selection > 7 || selection < 1);
+
+    //selection statement which evaluates to true if selection does not equal 7; if so, sort the students according to the user's selection
+    if (selection != 7)
+        //calling the sortLogicPtr function to sort doubly linked list
+        manager->sortLogicPtr(head, &selection, manager);
     
     //switch statement which determines the sorting criteria based on the user's menu selection
     switch (selection)
     {
-        //if user enters 0 from the menu, the function returns the head of the list and no sorting occurs
-        case 0:
-            return head;
-
-        //if user enters 1 from the menu, the function sorts the linked list by name in ascending order
-        case 1:
-            //assigning boolean to the result of comparing two strings. This value will be passed to the sortLogicPtr function to determine whether to swap nodes
-            boolean = strcmp(ptr2->name, ptr->name);
-            //calling the sortLogicPtr function to sort doubly linked list
-            manager->sortLogicPtr(head, ptr, ptr2, &boolean, manager);
-            printf("Students sorted by name lexicographically (ascending)!\n");
-            break;
-
-        //if the user enters 2 from the menu, the functions sorts the linked list by gpa in ascending order
-        case 2:
-            //ternary expression which evaluates to -1 if the gpa of the student that ptr points to is greater than the gpa of the student that ptr2 points to; otherwise, boolean is assigned the value 1
-            boolean = (ptr->gpa > ptr2->gpa) ? (-1) : (1);
-            //calling the sortLogicPtr function to sort doubly linked list
-            manager->sortLogicPtr(head, ptr, ptr2, &boolean, manager);
-            printf("Students sorted by GPA (lowest to highest)!\n");
-            break;
-
-        //if the user enters 3 from the menu, the functions sorts the linked list by gpa in descending order
-        case 3:
-            //ternary expression which evaluates to -1 if the gpa of the student that ptr points is less than the gpa of the student that ptr2 points to; otherwise, boolean is assigned the value 1
-            boolean = (ptr->gpa < ptr2->gpa) ? (-1) : (1);
-            //calling the sortLogicPtr function to sort doubly linked list
-            manager->sortLogicPtr(head, ptr, ptr2, &boolean, manager);
-            printf("Students sorted by GPA (highest to lowest)!\n");
-            break;
-
-        //if the user enters 4 from the menu, the functions sorts the linked list by attempts in ascending order
-        case 4:
-            //ternary expression which evaluates to -1 if the COP 2510 letter grade of the student that ptr points to is greater than the COP 2510 letter grade of the student that ptr2 points to; otherwise, boolean is assigned the value 1
-            boolean = (ptr->attempts > ptr2->attempts) ? (-1) : (1);
-            //calling the sortLogicPtr function to sort doubly linked list
-            manager->sortLogicPtr(head, ptr, ptr2, &boolean, manager);
-            printf("Students sorted by attempts (fewest to most)!\n");
-            break;
-
-        //if the user enters 5 from the menu, the functions sorts the linked list by attempts in descending order
-        case 5:
-            //ternary expression which evaluates to -1 if the COP 2510 letter grade of the student that ptr points to is less than the COP 2510 letter grade of the student that ptr2 points to; otherwise, boolean is assigned the value 1
-            boolean = (ptr->attempts < ptr2->attempts) ? (-1) : (1);
-            //calling the sortLogicPtr function to sort doubly linked list
-            manager->sortLogicPtr(head, ptr, ptr2, &boolean, manager);
-            printf("Students sorted by attempts (most to fewest)!\n");
-            break;
-
-        //if the user enters 6 from the menu, the functions reverses the linked list
-        case 6:
-            //calling the reversePtr function to reverse the doubly linked list and assigning the new head to head
-            head = manager->reversePtr(head, manager);
-            printf("List reversed!\n");
-            break;
-
-        //if the user enters 7 from the menu, the function exits the sorting menu
-        case 7:
-            break;
+        case 1: printf("Students sorted by name lexicographically (ascending)!\n"); break;
+        case 2: printf("Students sorted by GPA (lowest to highest)!\n"); break;
+        case 3: printf("Students sorted by GPA (highest to lowest)!\n"); break;
+        case 4: printf("Students sorted by attempts (fewest to most)!\n"); break;
+        case 5: printf("Students sorted by attempts (most to fewest)!\n"); break;
+        case 6: printf("List reversed!\n"); break;
+        case 7: break;
     }
 
     return head;
 }
 
 //function definition for sortLogic which provides the functionality for how to sort the doubly linked list of students
-struct Student *sortLogic(struct Student *head, struct Student *ptr, struct Student *ptr2, const int *logic, const struct ListManager *manager)
+struct Student *sortLogic(struct Student *head, const int *logic, const struct ListManager *manager)
 {
-    //outer for loop which iterates over the list of students
-    for (; ptr != NULL; ptr = ptr->next)
-        //inner for loop which iterates over the list of students
+    //variable declarations
+    bool swap;
+    struct Student *ptr, *ptr2;
+
+    //outer for loop which iterates over the linked list and sorts the students
+    for (ptr = head; ptr != NULL; ptr = ptr->next)
+        //inner for loop which iterates over the linked list and sorts the students
         for (ptr2 = ptr->next; ptr2 != NULL; ptr2 = ptr2->next)
         {
-            //selection statement which evaluates to true if logic is a positive value; if so, swap the nodes
-            if (*logic)
-                //calling the swapPtr function to swap the nodes that ptr and ptr2 point to
+            //switch statement which determines the sorting criteria based on the logic pointer's value
+            switch (*logic)
+            {
+                case 1: swap = (strcmp(ptr->name, ptr2->name) > 0); break;
+                case 2: swap = (ptr->gpa > ptr2->gpa); break;
+                case 3: swap = (ptr->gpa < ptr2->gpa); break;
+                case 4: swap = (ptr->attempts > ptr2->attempts); break;
+                case 5: swap = (ptr->attempts < ptr2->attempts); break;          
+            }
+
+            //selection statement which evaluates to true if swap is true, meaning that the students ptr and ptr2 point to should be swapped
+            if (swap)
+            {
+                //calling the swapPtr function to swap the nodes within the doubly linked list of the students
                 manager->swapPtr(head, ptr, ptr2);
 
-            //selection statement which evaluates to true if logic is 0; if so, compare the students based on the given criteria
-            else if (*logic == 0)
-            {
-                //selection statement which evaluates to true if the COP 2510 letter grade of the student that ptr points to is greater than the COP 2510 letterGrade of the student that ptr2 points to
-                if (ptr->copGrade > ptr2->copGrade)
-                    //calling the swapPtr function to swap the nodes that ptr and ptr2 point to
-                    manager->swapPtr(head, ptr, ptr2); 
-
-                //selection statement which evaluates to true if the COP 2510 letter grade of the student that ptr and ptr2 point to is equal, but the gpa of the student that ptr points to is less than the gpa of the student that ptr2 points to
-                else if (ptr->copGrade == ptr2->copGrade && ptr->gpa < ptr2->gpa)
-                    //calling the swapPtr function to swap the nodes that ptr and ptr2 point to
-                    manager->swapPtr(head, ptr, ptr2);
+                //updating the head pointer if the swapped node is the head
+                ptr = head;
                 
-                //selection statement which evaluates to true if the COP 2510 letter grade of the student that ptr and ptr2 point to is equal, the gpa of the student that ptr and ptr2 point to is equal, but the name of the student that ptr points to is lexicographically greater than the name of the student that ptr2 points to
-                else if (ptr->copGrade == ptr2->copGrade && ptr->gpa == ptr2->gpa && strcmp(ptr->name, ptr2->name) > 0)
-                    //calling the swapPtr function to swap the nodes that ptr and ptr2 point to
-                    manager->swapPtr(head, ptr, ptr2);
-            }    
+                break;
+            }
         }
 
     return head;    
@@ -768,18 +722,10 @@ struct Student *sortLogic(struct Student *head, struct Student *ptr, struct Stud
 //function definition for swap which is responsible for swapping the data of the nodes within the doubly linked list of the students
 void swap(struct Student *head, struct Student *ptr, struct Student *ptr2)
 {
-    //variable declarations using dynamically allocated memory
-    struct Student *temp = malloc(sizeof(struct Student));
+    //variable declarations
     char tempName[MAX_LENGTH + 1], tempNetid[MAX_LENGTH + 1], tempCop2510_grade;
     double tempGPA;
     int tempAttempts;
-
-    //selection statement which evaluates to true if temp was not successfully allocated memory; if so, terminate the function
-    if (temp == NULL)
-    {
-        printf("Memory allocation failed!\n");
-        return;
-    }
 
     //swapping the data in the nodes
     strcpy(tempName, ptr->name);
@@ -801,10 +747,6 @@ void swap(struct Student *head, struct Student *ptr, struct Student *ptr2)
     ptr2->copGrade = tempCop2510_grade;
     ptr2->gpa = tempGPA;
     ptr2->attempts = tempAttempts;
-
-    //reassigning ptr to the head of the list and ptr2 to the next element after the head of the list
-    ptr = head;
-    ptr2 = ptr->next;
 }
 
 //function definition for reverse which reverses the doubly linked list of students
