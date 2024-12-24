@@ -694,12 +694,7 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
     //selection statement which evaluates to true if selection does not equal 7; if so, sort the students according to the user's selection
     if (selection < 6)
         //calling the sortLogicPtr function to sort doubly linked list
-        manager->sortLogicPtr(head, &selection, manager);
-
-    //selection statement which evaluates to true if selection equals 6; if so, reverse the doubly linked list
-    else if (selection == 6)
-        //calling the reversePtr function to reverse the doubly linked list
-        head = manager->reversePtr(head, manager);    
+        manager->sortLogicPtr(head, &selection, manager); 
     
     //switch statement which determines the sorting criteria based on the user's menu selection
     switch (selection)
@@ -709,7 +704,7 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
         case 3: printf("Students sorted by GPA (highest to lowest)!\n"); break;
         case 4: printf("Students sorted by attempts (fewest to most)!\n"); break;
         case 5: printf("Students sorted by attempts (most to fewest)!\n"); break;
-        case 6: printf("List reversed!\n"); break;
+        case 6: head = manager->reversePtr(head, manager); printf("List reversed!\n"); break;
         case 7: break;
     }
 
@@ -720,11 +715,15 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
 struct Student *sortLogic(struct Student *head, const int *logic, const struct ListManager *manager)
 {
     //variable declarations
-    bool swap;
+    bool swap = false;
     struct Student *ptr, *ptr2;
 
     //outer for loop which iterates over the linked list and sorts the students
     for (ptr = head; ptr != NULL; ptr = ptr->next)
+    {
+        if (swap)
+            ptr = head;
+
         //inner for loop which iterates over the linked list and sorts the students
         for (ptr2 = ptr->next; ptr2 != NULL; ptr2 = ptr2->next)
         {
@@ -750,6 +749,7 @@ struct Student *sortLogic(struct Student *head, const int *logic, const struct L
                 break;
             }
         }
+    }    
 
     return head;    
 }
@@ -789,15 +789,30 @@ struct Student *reverse(struct Student *head, const struct ListManager *manager)
 {
     //variable declarations and initializations
     struct Student *ptr = head, *ptr2 = head;
-    int nodes = 1;
+    int nodes = 0, i = 0;
 
-    //for loop which counts the number of nodes in the list
-    for (; ptr2->next != NULL; ptr2 = ptr2->next, nodes++);
+    //for loop which iterates and counts all the nodes in the doubly linked list
+    for (struct Student *ptr = head; ptr != NULL; ptr = ptr->next, nodes++);
 
-    //for loop which reverses the doubly linked list of students by calling the swapPtr function
-    for (int i = 0; i < nodes / 2 && ptr != NULL && ptr2 != NULL; manager->swapPtr(head, ptr, ptr2), ptr2 = ptr2->previous, ptr = ptr->next, i++);
+    //variable declaration
+    struct Student allNodes[nodes];
 
-    return head;
+    //for loop which copies all the nodes from the doubly linked list to an array
+    for (struct Student *ptr = head; ptr != NULL; ptr = ptr->next)
+        allNodes[i++] = *ptr;
+
+    //for loop which reverses the doubly linked list of students by swapping the nodes with the nodes in the array
+    for (struct Student *ptr = head; ptr != NULL; ptr = ptr->next)
+    {
+        //swapping the data in the nodes
+        strcpy(ptr->name, allNodes[--i].name);
+        strcpy(ptr->netID, allNodes[i].netID);
+        ptr->copGrade = allNodes[i].copGrade;
+        ptr->gpa = allNodes[i].gpa;
+        ptr->attempts = allNodes[i].attempts;
+    }
+
+    return head;  
 }
 
 //function definition for delete which deletes a node from the list
