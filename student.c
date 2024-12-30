@@ -6,10 +6,114 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-//function pointer that points to the addMenu function that is responsible for printing the add student menu
-void (*addMenuPtr) () = addMenu;
-//function pointer that points to the sortMenuPtr function that is responsible for printing the sorting menu
-void (*sortMenuPtr) () = sortMenu;
+//function definition for initializeTrieManager which initializes the function pointers that are responsible for manipulating and searching through a declared trie structure
+void initializeTrieManager(struct TrieManager *manager)
+{
+    manager->getNodePtr = getNode;
+    manager->insertPtr = insert;
+    manager->searchPtr = search;
+    manager->trieIndexFinderPtr = trieIndexFinder;
+    manager->freeTriePtr = freeTrie;
+}
+
+//function definition for getNode which initializes an instance of a trie structure underneath an existing root
+struct Trie *getNode()
+{
+    //variable declaration and initialization using dynamic memory allocation
+    struct Trie *root = malloc(sizeof(struct Trie));
+
+    //selection statement which evaluates to true if memory allocation failed for the root node; if so, exit the program
+    if (root == NULL)
+    {
+        printf("Memory allocation failed for new node.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    //for loop which iterates through the valid characters that can be found in a student's name and sets each of the children to point to NULL
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        root->children[i] = NULL;
+
+    //initializing the isEndOfWord flag to false, indicating that the current node is not the end of a word in the trie
+    root->isEndOfWord = false;
+
+    return root;
+}
+
+//function definition for insert which adds a new string to the trie structure. The string that will be added to the trie is the string provided by the second argument
+void insert(struct Trie *root, const char *string, const struct TrieManager *manager)
+{
+    //variable declarations and initialization
+    struct Trie *parent = root;
+    int index;
+
+    //for loop which iterates through the characters in the string provided by the second argument and adds each character to the trie structure as a new node under the parent node
+    for (const char *ptr = string; *ptr != '\0'; ptr++)
+    {
+        //calling the trieIndexFinder function to determine what integer index is associated with the *ptr
+        index = manager->trieIndexFinderPtr(ptr);
+
+        //selection statement which evaluates to true if the current character does not yet exist in the trie structure underneath its parent node
+        if (parent->children[index] == NULL)
+            //calling the getNode function to create a new node under the parent node since we are adding the string to the trie structure
+            parent->children[index] = getNode();
+
+        //updating the parent node to point to the newly created node
+        parent = parent->children[index];
+    }
+
+    //marking the last node in the string as the end of a word in the trie structure by setting the isEndOfWord flag to true
+    parent->isEndOfWord = true;
+}
+
+//function definition for search which searches the trie structure and returns a boolean value indicating whether the string passed in through the second parameter is initalized within the trie
+bool search(struct Trie *root, const char *string, const struct TrieManager *manager)
+{
+    //variable declarations and initialization
+    struct Trie *parent = root;
+    int index;
+
+    //for loop which iterates through the characters in the string and will return a false value the instant a character in the string is not found in the trie
+    for (const char *ptr = string; *ptr != '\0'; ptr++)
+    {
+        //calling the trieIndexFinder function to determine what integer index is associated with *ptr
+        index = manager->trieIndexFinderPtr(ptr);
+
+        //selection statement which evaluates to true if the current character does not exist in the trie structure underneath its parent node; if so, the function will return a false boolean value
+        if (parent->children[index] == NULL)
+            return false;
+
+        //updating the parent node to point to the child node at index
+        parent = parent->children[index];    
+    }  
+
+    return (parent != NULL && parent->isEndOfWord);
+}
+
+//function definition for trieIndexFinder which is responsible for returning an integer value that represents the index for the character value passed to the function for the trie structure
+int trieIndexFinder(const char *ptr)
+{
+    //selection statement which evaluates to true if the letter in the stirng that ptr points to is an upper-case letter; if so, index is initialized to *ptr - 'A'
+    if (*ptr >= 'A' && *ptr <= 'Z')
+        return *ptr - 'A';
+
+    //selection statement which evaluates to true if the letter in the stirng that ptr points to is a lower-case letter; if so, index is initialized to *ptr - 'a' + 26
+    else if (*ptr >= 'a' && *ptr <= 'z')
+        return *ptr - 'a' + 26;    
+
+    //selection statement which evaluates to true if the letter in the string that ptr points to is an apostrophe; if so, index is initialized to 52
+    else if (*ptr == APOSTROPHE)
+        return APOSTROPHE_INDEX;
+
+    //selection statement which evaluates to true if the letter in the string that ptr points to is a period; if so, index is initialized to 53
+    else if (*ptr == PERIOD)
+        return PERIOD_INDEX;
+
+    //selection statement which evaluates to true if the letter in the string that ptr points to is a hyphen; if so, index is initialized to 54
+    else if (*ptr == HYPHEN)
+        return HYPHEN_INDEX;
+
+    return 0;      
+}
 
 //function definitition for menu which prints the main menu to the user
 void menu()
@@ -86,12 +190,12 @@ void removeNewline(char *string)
 }
 
 //function defintion for addStudent which is responsible for adding a student to the queue
-struct Student *addStudent(struct Student *head, const struct ListManager *manager)
+struct Student *addStudent(struct Student *head, const struct ListManager *manager, struct Trie *root, const struct TrieManager *trieManager)
 {
     //variable declarations and initializations using dynamically allocated memory
     char name[MAX_LENGTH + 1], netID[MAX_LENGTH + 1], letter[MAX_LENGTH + 1], gpaStr[MAX_LENGTH + 1], attemptsStr[MAX_LENGTH + 1], temp[MAX_LENGTH + 1];
     double gpa;
-    int attempts = -1;
+    int attempts;
     struct Student *newStudent = malloc(sizeof(struct Student));
 
     //selection statement which evaluates to true if memory was successfully dynamically allocated
@@ -101,8 +205,8 @@ struct Student *addStudent(struct Student *head, const struct ListManager *manag
         return head;
     }
 
-    //calling addMenuPtr to display the add student menu to the user
-    addMenuPtr();
+    //calling addMenu to display the add student menu to the user
+    addMenu();
 
     //getting the user's menu selection and removing the new-line character found at the end of the input
     fgets(temp, MAX_LENGTH + 1, stdin);
@@ -136,6 +240,8 @@ struct Student *addStudent(struct Student *head, const struct ListManager *manag
     newStudent->attempts = attempts;
     newStudent->next = NULL;
     newStudent->previous = NULL;
+    
+    trieManager->insertPtr(root, newStudent->netID, trieManager);
 
     //ternary expression where if head is not NULL, add the new student to the linked list; otherwise, the head of the linked list is the newly created student
     return (head != NULL) ? (manager->addPtr(head, newStudent)) : (newStudent);
@@ -276,13 +382,10 @@ int getAttempts(char *attemptsStr)
     //variable declarations
     bool flag;
     int attempts;
-
+    
     //do-while loop which iterates until the user enters a valid positive integer for the number of previous attempts in COP 2510 and removes the new-line characters within the input
     do
     {
-        //assigning the flag to the value true for each iteration of the outer do-while loop
-        flag = true;
-
         //do-while loop which iterates until the user enters a valid string input and checks if it contains only digits
         do
         {
@@ -296,13 +399,12 @@ int getAttempts(char *attemptsStr)
             if (!strlen(attemptsStr))
                 printf("Student's number of COP 2510 attempts must be at least one character.\n");
         } while (strlen(attemptsStr) < 1);
-
+        
         //for loop which iterates through the user's input string using a char pointer until *ptr reaches the first null-character
         for (char *ptr = attemptsStr; *ptr != '\0'; ptr++)
-            //selection statement which evaluates to true if *ptr is not a digit; if so, flag is now false and the loop continues
-            if (*ptr < '0' || *ptr > '9')    
-                flag = false;
-
+            //ternary expression which evaluates to true if any character in the string is not a digit; if so, flag is false; otherwise, flag is assigned to true
+            flag = (*ptr < '0' || *ptr > '9') ? false : true;
+        
         //selection statement which evaluates to true if flag is false; if so, print an error message to the user and have the do-while loop continue to iterate
         if (!flag)
         {
@@ -314,9 +416,10 @@ int getAttempts(char *attemptsStr)
         attempts = atoi(attemptsStr);
         //ternary expression which assigns false to flag if attempts is less than zero; otherwise, flag is assigned the value true
         flag = (attempts < 0) ? false : true;
-
+        
         //ternary expression which evaluates to true if flag is false; if so, print an error message to the user and have the do-while loop continue to
-        (!flag) ? (printf("Invalid number of previous attempts. Please enter a valid positive integer.\n")) : (1);;
+        if (!flag)
+            printf("Invalid number of previous attempts. Please enter a valid positive integer.\n");
     } while (!flag);
 
     return attempts;
@@ -374,7 +477,7 @@ struct Student *removeStudent(struct Student *head, const struct ListManager *ma
 }
 
 //function definition for modifyStudent which provides the functionality for modifying the students' members within the linked list
-void modifyStudent(struct Student *head, const struct ListManager *listManager, const struct MenuManager *menuManager)
+void modifyStudent(struct Student *head, const struct ListManager *listManager, const struct MenuManager *menuManager, struct Trie *root, const struct TrieManager *trieManager)
 {
     //variable declarations and initializations
     char netID[MAX_LENGTH + 1], input[MAX_LENGTH + 1], output[MAX_LENGTH + 1];
@@ -406,34 +509,29 @@ void modifyStudent(struct Student *head, const struct ListManager *listManager, 
         //selection statement which evaluates to true if the string's length is greater than zero characters
         else
         {
-            //for loop which iterates through the linked list to find the student with the entered Net ID
-            for (; ptr != NULL; ptr = ptr->next)
-                //selection statement which evaluates to true if the student with the entered Net ID was found in the linked list; if so, break from the loop
-                if (!strcmp(netID, ptr->netID))
-                {
-                    found = true;
-                    break;
-                }    
-
-            //selection statement which evaluates to true if the student with the entered Net ID was not found in the linked list; if so, print an error message to the user and ask for a valid Net ID
-            if (!found)
+            //selection statement which evaluates to true 
+            if (trieManager->searchPtr(root, netID, trieManager))
             {
-                //print error message and asking the user if it would like a complete list of students in the queue
-                printf("A student with the Net ID %s does not exist. If you are unsure of the student's Net ID that you are looking for, type List to display all the students within the queue.\n", netID);
-                fgets(input, MAX_LENGTH + 1, stdin);
-                //calling removeNewline function to remove the new-line characters from the user's input
-                removeNewline(input);
+                //for loop which iterates over the students in the list and breaks once a student with the same Net ID as netID is encountered
+                for (; ptr != NULL; ptr = ptr->next)
+                    //selection statement which evaluates to true if the current student's net ID matches the entered Net ID; if so, break from the nested for loop
+                    if (!strcmp(netID, ptr->netID))
+                        break;
 
-                //selection statement which evaluates to true if the user wants a complete list of students in the queue; if so, call the printListPtr function to display the list
-                if (!strcmp(input, "List"))
-                    listManager->printListPtr(head, menuManager);
-            }
+                break;        
+            }    
 
-            //selection statement which evaluates to true if the student with the entered Net ID was found in the linked list; if so, break from the do-while loop
-            else
-                break;  
-        }    
-    } while (strlen(netID) < 1);
+            //print error message and asking the user if it would like a complete list of students in the queue
+            printf("A student with the Net ID %s does not exist. If you are unsure of the student's Net ID that you are looking for, type List to display all the students within the queue.\n", netID);
+            fgets(input, MAX_LENGTH + 1, stdin);
+            //calling removeNewline function to remove the new-line characters from the user's input
+            removeNewline(input);
+
+            //selection statement which evaluates to true if the user wants a complete list of students in the queue; if so, call the printListPtr function to display the list
+            if (!strcmp(input, "List"))
+                listManager->printListPtr(head, menuManager);
+        }   
+    } while (!trieManager->searchPtr(root, netID, trieManager));
 
     //do-while loop which iterates until the user enters a valid menu option
     do
@@ -445,13 +543,12 @@ void modifyStudent(struct Student *head, const struct ListManager *listManager, 
         printf("Please select the information you want to modify:\n");
         printf("------------------------------------------------\n");
         printf(" 1. Modify Name\n");
-        printf(" 2. Modify Net ID\n");
-        printf(" 3. Modify Attempts\n");
-        printf(" 4. Modify GPA\n");
-        printf(" 5. Modify Grade\n");
-        printf(" 6. Exit\n");
+        printf(" 2. Modify Attempts\n");
+        printf(" 3. Modify GPA\n");
+        printf(" 4. Modify Grade\n");
+        printf(" 5. Exit\n");
         printf("------------------------------------------------\n");
-        printf("Enter your choice [1-6]: ");
+        printf("Enter your choice [1-5]: ");
 
         //getting user input for the menu option and converting it to an integer
         fgets(input, MAX_LENGTH + 1, stdin);
@@ -467,33 +564,26 @@ void modifyStudent(struct Student *head, const struct ListManager *listManager, 
                 strcpy(ptr->name, output);
                 break;
 
-            //case 2 to modify the Net ID of the student
+            //case 2 to modify the number of attempts of the student
             case 2:
-                //calling the getNetID function to get the modified Net ID of the student and modifying the Net ID of the student in the linked list
-                getNetID(output);
-                strcpy(ptr->netID, output);
-                break;
-
-            //case 3 to modify the number of attempts of the student
-            case 3:
                 //calling the getAttempts function to get the modified COP 2510 attempts and modifying the COP 2510 attempts of the student in the linked list
                 ptr->attempts = getAttempts(output);
                 break;
 
-            //case 4 to modify the grade point average (GPA) of the student
-            case 4:
+            //case 3 to modify the grade point average (GPA) of the student
+            case 3:
                 //calling the getGpa function to get the modified GPA and modifying the GPA of the student in the linked list
                 ptr->gpa = getGpa(output);
                 break;
 
-            //case 5 to modify the COP 2510 course grade of the student
-            case 5:
+            //case 4 to modify the COP 2510 course grade of the student
+            case 4:
                 //calling the getGrade function to get the modified grade and modifying the grade of the student in the linked list
                 getGrade(output);
                 ptr->copGrade = *output;
                 break;
         }
-    } while (selection != 6);
+    } while (selection != 5);
 
     //printing a success message to the user and asking if the user would like to sort the students with the updated information
     printf("\n%s's information has been successfully modified!\n\n", ptr->name);
@@ -683,8 +773,8 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
     //do-while loop which iterates until the user enters a valid menu option
     do
     {
-        //calling sortMenuPtr function to print the sorting menu to the user
-        sortMenuPtr();  
+        //calling sortMenu function to print the sorting menu to the user
+        sortMenu();  
 
         //getting menu option from the user and converting the user's input into an integer
         fgets(temp, MAX_LENGTH + 1, stdin);
@@ -714,13 +804,15 @@ struct Student *sort(struct Student *head, const struct ListManager *manager)
 //function definition for sortLogic which provides the functionality for how to sort the doubly linked list of students
 struct Student *sortLogic(struct Student *head, const int *logic, const struct ListManager *manager)
 {
-    //variable declarations
+    //variable declarations and initialization
     bool swap = false;
     struct Student *ptr, *ptr2;
+    char lowerCasePtr[MAX_LENGTH + 1], lowerCasePtr2[MAX_LENGTH + 1];
 
     //outer for loop which iterates over the linked list and sorts the students
     for (ptr = head; ptr != NULL; ptr = ptr->next)
     {
+        //selection statement which evaluates to true if a swapped just occurred; if so, make ptr point to the beginning of the list so the sorting of the linked list can continue from the beginning
         if (swap)
             ptr = head;
 
@@ -730,7 +822,19 @@ struct Student *sortLogic(struct Student *head, const int *logic, const struct L
             //switch statement which determines the sorting criteria based on the logic pointer's value
             switch (*logic)
             {
-                case 1: swap = (strcmp(ptr->name, ptr2->name) > 0); break;
+                case 1: 
+                    //copying the contents of the students' name that ptr and ptr2 point to into temporary strings
+                    strcpy(lowerCasePtr, ptr->name);
+                    strcpy(lowerCasePtr2, ptr2->name);
+
+                    //for loop which converts each character in the name that ptr points to into a lower-case character and stores this string in a temporary string variable
+                    for (char *ptrChar = lowerCasePtr; *ptrChar != '\0'; *ptrChar = tolower(*ptrChar), ptrChar++);
+                    //for loop which converts each character in the name that ptr2 points to into a lower-case character and stores this stirng in a temporary string variable
+                    for (char *ptrChar2 = lowerCasePtr2; *ptrChar2!= '\0'; *ptrChar2 = tolower(*ptrChar2), ptrChar2++);
+
+                    swap = (strcmp(lowerCasePtr, lowerCasePtr2) > 0);
+                    break;
+
                 case 2: swap = (ptr->gpa > ptr2->gpa); break;
                 case 3: swap = (ptr->gpa < ptr2->gpa); break;
                 case 4: swap = (ptr->attempts > ptr2->attempts); break;
@@ -913,4 +1017,22 @@ void writeStudents(FILE *fptr, const struct Student *head)
         fprintf(fptr, "|  COP 2510 Attempts: %-26d |\n", ptr->attempts);
         fprintf(fptr, "--------------------------------------------------\n");
     }
+}
+
+//function definition for freeTrie which frees the dynamically allocated memory used for the creation of the trie structure
+void freeTrie(struct Trie *trie)
+{
+    //selection statement which evaluates to true if the root of the trie structure is NULL; if so, simply return back to main
+    if (trie == NULL)
+        return;
+
+    //for loop which iterates over all the children nodes of the current node and recursively frees the dynamically allocated memory for each child node
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        //selection statement which evaluates to true if the children nodes of the current node does not equal NULL; if so, recursively call the function to navigate to an inner node within the trie
+        if (trie->children[i] != NULL)  
+            //calling freeTrie function to free the trie structure
+            freeTrie(trie->children[i]);
+
+    //freeing the dynamically allocated memory for the current node
+    free(trie);        
 }
