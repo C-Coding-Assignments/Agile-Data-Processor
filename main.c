@@ -11,11 +11,12 @@ int main()
     struct Student *head = NULL;
     struct MenuManager *menuManager = malloc(sizeof(struct MenuManager));
     struct ListManager *listManager = malloc(sizeof(struct ListManager));
+    struct TrieManager *trieManager = malloc(sizeof(struct TrieManager));
+    struct Trie *trie;
     FILE *filePtr;
-    void (*writeStudentsPtr) (FILE *, const struct Student *) = writeStudents;
 
     //selection statement which evaluates to true if dynamic memory allocation failed for menuManager and/or listManager
-    if (menuManager == NULL || listManager == NULL)
+    if (menuManager == NULL || listManager == NULL || trieManager == NULL)
     {
         printf("Memory allocation failed.\n");
         return 1;
@@ -25,6 +26,10 @@ int main()
     initializeMenuManager(menuManager);
     //initializing the function pointer members associated with the ListManager struct
     initializeListManager(listManager);
+    //initializing the function pointer members associated with the TrieManager struct
+    initializeTrieManager(trieManager);
+
+    trie = trieManager->getNodePtr();
 
     //printing the main menu to the user
     menuManager->menuPtr();
@@ -44,7 +49,7 @@ int main()
 
         //selection statement which evaluates to true if the user has entered a to add a new student to the queue
         else if (!strcmp(temp, "a"))   
-            head = menuManager->addStudentPtr(head, listManager); 
+            head = menuManager->addStudentPtr(head, listManager, trie, trieManager); 
 
         //selection statement which evaluates to true if the user has entered p to remove one of the students in the queue
         else if (!strcmp(temp, "p"))
@@ -52,7 +57,7 @@ int main()
 
         //selection statement which evaluates to true if the user has entered m to modify a student in the queue
         else if (!strcmp(temp, "m"))
-            menuManager->modifyStudentPtr(head, listManager, menuManager);
+            menuManager->modifyStudentPtr(head, listManager, menuManager, trie, trieManager);
 
         //selection statement which evaluates to true if the user has entered l to list all the students in the queue
         else if (!strcmp(temp, "l"))
@@ -79,7 +84,7 @@ int main()
 
     //printing the final list of students to the user
     printf("Here are your students:\n");
-    //calling the printListPtr to print all the students in the queue
+    //calling the printList to print all the students in the queue
     listManager->printListPtr(head, menuManager);
 
     //opening the file to write the list of students in the queue in the text file
@@ -92,18 +97,22 @@ int main()
         return 1;
     }
 
-    //calling the writeStudentsPtr function to write the list of students in the queue to the text file
-    writeStudentsPtr(filePtr, head);
+    //calling the writeStudents function to write the list of students in the queue to the text file
+    writeStudents(filePtr, head);
 
     //closing the file after writing the list of students in the queue to the text file
     fclose(filePtr);
 
-    //calling the deleteAllPtr function to free all dynamically allocated students in the queue
+    //calling the deleteAll function to free all dynamically allocated students in the queue
     listManager->deleteAllPtr(head);
 
-    //freeing the dynamically allocated memory for menuManager and listManager
+    //calling the freeTrie function to free the dynamically allocated memory within the trie structure
+    trieManager->freeTriePtr(trie);
+
+    //freeing the dynamically allocated memory for menuManager, listManager, and trieManager
     free(menuManager);
     free(listManager);
+    free(trieManager);
 
     return 0;
 }
