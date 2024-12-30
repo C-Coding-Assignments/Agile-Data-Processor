@@ -310,15 +310,17 @@
     <p><strong>Returns:</strong> A pointer to the head of the list after the student has been removed (if the student was found).</p>
 </div>
 <div class="function-explanation">
-    <h2><code>void modifyStudent(struct Student *head, const struct ListManager *listManager, const struct MenuManager *menuManager)</code></h2>
-    <p><strong>Description:</strong> This function allows the modification of a student's information (such as name, Net ID, attempts, GPA, and grade) within the linked list. The function first prompts the user for the student's Net ID, then displays a modification menu for selecting the field to modify. After the modification, the user can choose whether to sort the list with the updated information.</p>
+    <h2><code>void modifyStudent(struct Student *head, const struct ListManager *listManager, const struct MenuManager *menuManager, struct Trie *root, const struct TrieManager *trieManager)</code></h2>
+    <p><strong>Description:</strong> This function modifies the attributes of a student in the linked list based on user input. It identifies the student using their <code>netID</code>, verifies their existence using a trie, and allows modification of their name, attempts, GPA, or grade. Optionally, the user can sort the list after modifications.</p>
     <p><strong>Parameters:</strong></p>
     <ul>
-        <li><strong>head</strong>: A pointer to the first student in the linked list.</li>
-        <li><strong>listManager</strong>: A pointer to the ListManager struct that provides functionality for printing and sorting the student list.</li>
-        <li><strong>menuManager</strong>: A pointer to the MenuManager struct used for managing menu-related actions.</li>
+        <li><code>head</code> (struct Student*): A pointer to the head of the student queue.</li>
+        <li><code>listManager</code> (const struct ListManager*): A pointer to the list manager containing function pointers for managing the linked list.</li>
+        <li><code>menuManager</code> (const struct MenuManager*): A pointer to the menu manager used to display and handle menu options.</li>
+        <li><code>root</code> (struct Trie*): A pointer to the root of the trie structure used for searching student <code>netID</code> values.</li>
+        <li><code>trieManager</code> (const struct TrieManager*): A pointer to the trie manager containing function pointers for managing the trie structure.</li>
     </ul>
-    <p><strong>Returns:</strong> This function does not return a value. It modifies the student information in the linked list and optionally sorts the list.</p>
+    <p><strong>Returns:</strong> This function does not return a value but modifies the linked list and trie structure directly.</p>
 </div>
 <div class="function-explanation">
     <h2><code>void printList(const struct Student *head, const struct MenuManager *manager)</code></h2>
