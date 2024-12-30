@@ -144,6 +144,56 @@
 
 <section id="function-explanations">
   <h2>Function Definitions 🧑‍💻</h2>
+  <div class="function-explanation">
+    <h2><code>void initializeTrieManager(struct TrieManager *manager)</code></h2>
+    <p><strong>Description:</strong> This function initializes the function pointers in a <code>TrieManager</code> structure to handle trie operations such as insertion, search, and memory management.</p>
+    <p><strong>Parameters:</strong></p>
+    <ul>
+        <li><code>manager</code> (struct TrieManager*): A pointer to the <code>TrieManager</code> structure to be initialized.</li>
+    </ul>
+    <p><strong>Returns:</strong> This function does not return a value.</p>
+</div>
+
+<div class="function-explanation">
+    <h2><code>struct Trie *getNode()</code></h2>
+    <p><strong>Description:</strong> This function dynamically allocates memory for a new trie node, initializes its children to <code>NULL</code>, and sets <code>isEndOfWord</code> to <code>false</code>.</p>
+    <p><strong>Parameters:</strong> This function does not take any parameters.</p>
+    <p><strong>Returns:</strong> A pointer to the newly created trie node (struct Trie*).</p>
+</div>
+
+<div class="function-explanation">
+    <h2><code>void insert(struct Trie *root, const char *string, const struct TrieManager *manager)</code></h2>
+    <p><strong>Description:</strong> This function inserts a string into the trie structure by creating new nodes as needed and marking the end of the string.</p>
+    <p><strong>Parameters:</strong></p>
+    <ul>
+        <li><code>root</code> (struct Trie*): A pointer to the root of the trie.</li>
+        <li><code>string</code> (const char*): The string to be added to the trie.</li>
+        <li><code>manager</code> (const struct TrieManager*): A pointer to the trie manager, containing function pointers for trie operations.</li>
+    </ul>
+    <p><strong>Returns:</strong> This function does not return a value.</p>
+</div>
+
+<div class="function-explanation">
+    <h2><code>bool search(struct Trie *root, const char *string, const struct TrieManager *manager)</code></h2>
+    <p><strong>Description:</strong> This function searches for a string in the trie structure and determines if it is a valid word in the trie.</p>
+    <p><strong>Parameters:</strong></p>
+    <ul>
+        <li><code>root</code> (struct Trie*): A pointer to the root of the trie.</li>
+        <li><code>string</code> (const char*): The string to be searched in the trie.</li>
+        <li><code>manager</code> (const struct TrieManager*): A pointer to the trie manager, containing function pointers for trie operations.</li>
+    </ul>
+    <p><strong>Returns:</strong> A boolean value (<code>true</code> or <code>false</code>) indicating whether the string exists in the trie.</p>
+</div>
+
+<div class="function-explanation">
+    <h2><code>int trieIndexFinder(const char *ptr)</code></h2>
+    <p><strong>Description:</strong> This function calculates the index of a character in the trie based on its ASCII value or specific punctuation rules.</p>
+    <p><strong>Parameters:</strong></p>
+    <ul>
+        <li><code>ptr</code> (const char*): A pointer to the character to be indexed.</li>
+    </ul>
+    <p><strong>Returns:</strong> An integer representing the index of the character in the trie.</p>
+</div>
   <h2><code>void menu()</code></h2>
     <p><strong>Description:</strong> This function displays the main menu to the user with various options for managing the student queue.</p>
     <p><strong>Parameters:</strong></p>
@@ -191,12 +241,14 @@
 </div>
 
 <div class="function-explanation">
-    <h2><code>struct Student *addStudent(struct Student *head, const struct ListManager *manager)</code></h2>
-    <p><strong>Description:</strong> This function adds a new student to the queue by dynamically allocating memory for a new student and collecting the student's information.</p>
+    <h2><code>struct Student *addStudent(struct Student *head, const struct ListManager *manager, struct Trie *root, const struct TrieManager *trieManager)</code></h2>
+    <p><strong>Description:</strong> This function adds a new student to the queue by dynamically allocating memory for a new student, collecting the student's information, and inserting their <code>netID</code> into the trie structure. The student is then added to the linked list representing the queue.</p>
     <p><strong>Parameters:</strong></p>
     <ul>
         <li><code>head</code> (struct Student*): A pointer to the head of the student queue.</li>
-        <li><code>manager</code> (const struct ListManager*): A pointer to the list manager, which contains function pointers to manage the queue.</li>
+        <li><code>manager</code> (const struct ListManager*): A pointer to the list manager containing function pointers for managing the linked list.</li>
+        <li><code>root</code> (struct Trie*): A pointer to the root of the trie structure where student <code>netID</code> values are stored.</li>
+        <li><code>trieManager</code> (const struct TrieManager*): A pointer to the trie manager containing function pointers for managing the trie structure.</li>
     </ul>
     <p><strong>Returns:</strong> A pointer to the updated student queue (struct Student*).</p>
 </div>
@@ -256,16 +308,6 @@
         <li><strong>manager</strong>: A pointer to the ListManager struct which contains the delete function for removing a student from the list.</li>
     </ul>
     <p><strong>Returns:</strong> A pointer to the head of the list after the student has been removed (if the student was found).</p>
-</div>
-<div class="function-explanation">
-    <h2><code>struct Student *removeStudent(struct Student *head, const struct ListManager *manager)</code></h2>
-    <p><strong>Description:</strong> This function removes a specified student from the linked list based on their Net ID. It prompts the user for the Net ID of the student to be removed, searches the list for a matching Net ID, and if found, deletes the student from the list using the manager's delete function. If the list is empty, it displays an error message and returns NULL.</p>
-    <p><strong>Parameters:</strong></p>
-    <ul>
-        <li><strong>head</strong>: A pointer to the first student in the list.</li>
-        <li><strong>manager</strong>: A pointer to the ListManager struct, which contains the delete function to remove a student from the list.</li>
-    </ul>
-    <p><strong>Returns:</strong> A pointer to the head of the list after the student has been removed (if the student was found and deleted). If the list is empty, it returns NULL.</p>
 </div>
 <div class="function-explanation">
     <h2><code>void modifyStudent(struct Student *head, const struct ListManager *listManager, const struct MenuManager *menuManager)</code></h2>
@@ -392,6 +434,15 @@
         <li><strong>head</strong>: A pointer to the head of the linked list of students.</li>
     </ul>
     <p><strong>Returns:</strong> This function does not return any value.</p>
+</div>
+<div class="function-explanation">
+    <h2><code>void freeTrie(struct Trie *trie)</code></h2>
+    <p><strong>Description:</strong> This function recursively frees the dynamically allocated memory used for the creation of the trie structure, ensuring no memory leaks occur.</p>
+    <p><strong>Parameters:</strong></p>
+    <ul>
+        <li><code>trie</code> (struct Trie*): A pointer to the root of the trie structure to be freed.</li>
+    </ul>
+    <p><strong>Returns:</strong> This function does not return a value.</p>
 </div>
 </section>
 
