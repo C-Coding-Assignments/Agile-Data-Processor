@@ -92,6 +92,26 @@
     </ul>
 </div>
 <div class="structure-explanation">
+    <h2>1. <code>struct Trie</code></h2>
+    <p>This structure defines a trie node. It contains:</p>
+    <ul>
+        <li><code>children</code>: An array of pointers to child nodes, with size <code>ALPHABET_SIZE</code>.</li>
+        <li><code>isEndOfWord</code>: A boolean value indicating if the current node represents the end of a word.</li>
+    </ul>
+</div>
+
+<div class="structure-explanation">
+    <h2>2. <code>struct TrieManager</code></h2>
+    <p>This structure manages operations on a trie using function pointers. It contains:</p>
+    <ul>
+        <li><code>getNodePtr</code>: A pointer to a function that initializes a new trie node.</li>
+        <li><code>insertPtr</code>: A pointer to a function that inserts a string into the trie.</li>
+        <li><code>searchPtr</code>: A pointer to a function that searches for a string in the trie.</li>
+        <li><code>trieIndexFinderPtr</code>: A pointer to a function that determines the index of a character in the alphabet.</li>
+        <li><code>freeTriePtr</code>: A pointer to a function that frees all dynamically allocated nodes in the trie.</li>
+    </ul>
+</div>
+<div class="structure-explanation">
     <h2>2. <code>struct ListManager</code></h2>
     <p>This structure defines the function pointers used to modify and manage the doubly linked list of students. It contains:</p>
     <ul>
