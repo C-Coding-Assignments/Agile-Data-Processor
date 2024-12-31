@@ -195,7 +195,7 @@ struct Student *addStudent(struct Student *head, const struct ListManager *manag
     //variable declarations and initializations using dynamically allocated memory
     char name[MAX_LENGTH + 1], netID[MAX_LENGTH + 1], letter[MAX_LENGTH + 1], gpaStr[MAX_LENGTH + 1], attemptsStr[MAX_LENGTH + 1], temp[MAX_LENGTH + 1];
     double gpa;
-    int attempts;
+    int attempts = -1;
     struct Student *newStudent = malloc(sizeof(struct Student));
 
     //selection statement which evaluates to true if memory was successfully dynamically allocated
@@ -218,12 +218,20 @@ struct Student *addStudent(struct Student *head, const struct ListManager *manag
 
     //calling the getName function to get the name of the new student
     getName(name);
-    //calling the getNetID function to get the net ID of the new student
-    getNetID(netID);
 
     //do-while loop which iterates until the user has entered all the information for creating a new student
     do
     {
+        //calling the getNetID function to get the net ID of the new student
+        getNetID(netID);
+
+        //selection statement which evaluates to true if the user entered a Net ID for the new student that already is being used for an existing student; if so, print an error message and allow the user to input a different New ID
+        if (trieManager->searchPtr(root, netID, trieManager))
+        {
+            printf("Error: Net ID already exists in the system. Please enter a unique Net ID.\n");
+            continue;
+        }
+
         //calling the getGrade function to get the COP 2510 grade of the new student
         getGrade(letter);
         //calling the getGpa function to get the GPA of the new student
