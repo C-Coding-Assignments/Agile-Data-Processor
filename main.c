@@ -6,7 +6,7 @@
 
 int main()
 {
-    //variable declarations and initializations
+    //variable declarations and initializations using dynamic memory allocation
     char temp[MAX_LENGTH + 1];
     struct Student *head = NULL;
     struct MenuManager *menuManager = malloc(sizeof(struct MenuManager));
@@ -29,6 +29,7 @@ int main()
     //initializing the function pointer members associated with the TrieManager struct
     initializeTrieManager(trieManager);
 
+    //calling the getNode function to initialize the root of the trie structure
     trie = trieManager->getNodePtr();
 
     //printing the main menu to the user
@@ -76,14 +77,14 @@ int main()
             menuManager->printMinGradePtr(head, menuManager);
 
         //selection statement which evaluates to true if the user has entered an invalid menu option; if so, print an error message
-        else
+        else if (strcmp(temp, "q"))
             printf("Invalid menu option. Try again.\n");
 
         putchar('\n');    
     } while (strcmp(temp, "q"));
 
     //printing the final list of students to the user
-    printf("Here are your students:\n");
+    printf("Here are all the students in the queue:\n");
     //calling the printList to print all the students in the queue
     listManager->printListPtr(head, menuManager);
 
