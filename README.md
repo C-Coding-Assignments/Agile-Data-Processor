@@ -92,7 +92,7 @@
     </ul>
 </div>
 <div class="structure-explanation">
-    <h2>1. <code>struct Trie</code></h2>
+    <h2>2. <code>struct Trie</code></h2>
     <p>This structure defines a trie node. It contains:</p>
     <ul>
         <li><code>children</code>: An array of pointers to child nodes, with size <code>ALPHABET_SIZE</code>.</li>
@@ -101,7 +101,7 @@
 </div>
 
 <div class="structure-explanation">
-    <h2>2. <code>struct TrieManager</code></h2>
+    <h2>3. <code>struct TrieManager</code></h2>
     <p>This structure manages operations on a trie using function pointers. It contains:</p>
     <ul>
         <li><code>getNodePtr</code>: A pointer to a function that initializes a new trie node.</li>
@@ -112,7 +112,7 @@
     </ul>
 </div>
 <div class="structure-explanation">
-    <h2>2. <code>struct ListManager</code></h2>
+    <h2>4. <code>struct ListManager</code></h2>
     <p>This structure defines the function pointers used to modify and manage the doubly linked list of students. It contains:</p>
     <ul>
         <li><code>addPtr</code>: A function pointer that points to a function responsible for adding a student to the list.</li>
@@ -126,7 +126,7 @@
     </ul>
 </div>
 <div class="structure-explanation">
-    <h2>3. <code>struct MenuManager</code></h2>
+    <h2>5. <code>struct MenuManager</code></h2>
     <p>This structure defines the function pointers used to manage the menu and various actions related to the students in the list. It contains:</p>
     <ul>
         <li><code>menuPtr</code>: A function pointer that points to the function responsible for displaying the menu options to the user.</li>
